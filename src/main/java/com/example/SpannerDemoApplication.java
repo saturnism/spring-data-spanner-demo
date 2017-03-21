@@ -16,12 +16,14 @@
 
 package com.example;
 
+import com.google.cloud.spanner.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.spanner.core.SpannerTemplate;
 
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -45,5 +47,13 @@ public class SpannerDemoApplication implements CommandLineRunner {
         .price(100.0).build();
 
     spannerTemplate.insert(t);
+
+    spannerTemplate.transaction(ctx -> {
+      List<Trade> trades = ctx.find(Trade.class, Statement.of("select id, price from trades where symbol = 'AAPL'"));
+      for (Trade trade: trades) {
+        trade.setPrice(trade.getPrice() + 13);
+        ctx.update(trade, "price");
+      }
+    });
   }
 }
