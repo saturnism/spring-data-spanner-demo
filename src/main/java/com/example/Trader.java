@@ -17,29 +17,20 @@
 package com.example;
 
 import lombok.*;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.spanner.core.mapping.Column;
 import org.springframework.data.spanner.core.mapping.Table;
 
 /**
  * Created by rayt on 3/20/17.
  */
-@Table(name="trades")
+@Table(name="trader")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Trade {
+public class Trader {
   @Id
   String id;
-
-  String action;
-  Double price;
-  Double shares;
-  String symbol;
-
-  @Column(name="trader_id")
-  String traderId;
+  String name;
 }

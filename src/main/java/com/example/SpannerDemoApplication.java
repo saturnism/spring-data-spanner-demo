@@ -16,20 +16,26 @@
 
 package com.example;
 
-import com.google.cloud.spanner.Statement;
+import com.google.cloud.spanner.DatabaseClient;
+import com.google.cloud.spanner.Spanner;
+import com.google.cloud.spanner.SpannerOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.spanner.core.SpannerTemplate;
+import org.springframework.data.spanner.repository.config.EnableSpannerRepositories;
 
-import java.util.List;
 import java.util.UUID;
 
 @SpringBootApplication
+@EnableSpannerRepositories
 public class SpannerDemoApplication implements CommandLineRunner {
   @Autowired
   SpannerTemplate spannerTemplate;
+
+  @Autowired
+  TradeRepository tradeRepository;
 
   public static void main(String[] args) {
     SpringApplication.run(SpannerDemoApplication.class, args);
@@ -37,23 +43,35 @@ public class SpannerDemoApplication implements CommandLineRunner {
 
   @Override
   public void run(String... strings) throws Exception {
-     spannerTemplate.findAll(Trade.class)
-        .stream().forEach(System.out::println);
-
-    Trade t = Trade.builder().id(UUID.randomUUID().toString())
-        .symbol("AAPL")
-        .action("BUY")
-        .shares(5.0)
-        .price(100.0).build();
-
-    spannerTemplate.insert(t);
-
     spannerTemplate.transaction(ctx -> {
-      List<Trade> trades = ctx.find(Trade.class, Statement.of("select id, price from trades where symbol = 'AAPL'"));
-      for (Trade trade: trades) {
-        trade.setPrice(trade.getPrice() + 13);
-        ctx.update(trade, "price");
+      String traderId = UUID.randomUUID().toString();
+      Trader trader = Trader.builder().id(traderId)
+          .name("Ray")
+          .build();
+
+      ctx.insert(trader);
+      for (int i = 0; i < 5; i++) {
+        String tradeId = UUID.randomUUID().toString();
+
+        Trade t = Trade.builder().id(tradeId)
+            .symbol("GOOGL")
+            .action("BUY")
+            .shares(5.0)
+            .traderId(traderId)
+            .price(100.0).build();
+
+        ctx.insert(t);
       }
     });
+
+    spannerTemplate.findAll(Trade.class)
+        .stream().forEach(System.out::println);
+
+    long count = tradeRepository.count();
+    System.out.println("There are " + count + " records");
+    tradeRepository.deleteAll();
+
+    count = tradeRepository.count();
+    System.out.println("Deleted, There are " + count + " records");
   }
 }
