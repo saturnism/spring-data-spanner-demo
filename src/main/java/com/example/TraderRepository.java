@@ -16,29 +16,14 @@
 
 package com.example;
 
-import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.spanner.core.mapping.Column;
-import org.springframework.data.spanner.core.mapping.Table;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
 /**
- * Created by rayt on 3/20/17.
+ * Created by rayt on 3/23/17.
  */
-@Table(name = "trades")
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public class Trade {
-  @Id
-  String id;
-
-  String action;
-  Double price;
-  Double shares;
-  String symbol;
-
-  @Column(name = "trader_id")
-  String traderId;
+@Repository
+@RepositoryRestResource
+public interface TraderRepository extends CrudRepository<Trader, String> {
 }

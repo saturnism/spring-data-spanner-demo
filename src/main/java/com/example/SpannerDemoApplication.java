@@ -16,9 +16,6 @@
 
 package com.example;
 
-import com.google.cloud.spanner.DatabaseClient;
-import com.google.cloud.spanner.Spanner;
-import com.google.cloud.spanner.SpannerOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -37,14 +34,17 @@ public class SpannerDemoApplication implements CommandLineRunner {
   @Autowired
   TradeRepository tradeRepository;
 
+  @Autowired
+  TraderRepository traderRepository;
+
   public static void main(String[] args) {
     SpringApplication.run(SpannerDemoApplication.class, args);
   }
 
   @Override
   public void run(String... strings) throws Exception {
+    final String traderId = UUID.randomUUID().toString();
     spannerTemplate.transaction(ctx -> {
-      String traderId = UUID.randomUUID().toString();
       Trader trader = Trader.builder().id(traderId)
           .name("Ray")
           .build();
@@ -69,9 +69,15 @@ public class SpannerDemoApplication implements CommandLineRunner {
 
     long count = tradeRepository.count();
     System.out.println("There are " + count + " records");
-    tradeRepository.deleteAll();
 
+    Trader trader = traderRepository.findOne(traderId);
+    System.out.println(trader);
+
+
+    /*
+    tradeRepository.deleteAll();
     count = tradeRepository.count();
     System.out.println("Deleted, There are " + count + " records");
+    */
   }
 }

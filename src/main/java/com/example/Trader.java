@@ -23,7 +23,7 @@ import org.springframework.data.spanner.core.mapping.Table;
 /**
  * Created by rayt on 3/20/17.
  */
-@Table(name="trader")
+@Table(name = "trader")
 @Data
 @Builder
 @AllArgsConstructor

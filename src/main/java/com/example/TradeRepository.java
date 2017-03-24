@@ -17,16 +17,13 @@
 package com.example;
 
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.spanner.core.SpannerOperations;
-import org.springframework.data.spanner.core.mapping.SpannerMappingContext;
-import org.springframework.data.spanner.repository.support.MappingSpannerEntityInformation;
-import org.springframework.data.spanner.repository.support.SimpleSpannerRepository;
-import org.springframework.data.spanner.repository.support.SpannerEntityInformation;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by rayt on 3/23/17.
  */
 @Repository
-public interface TradeRepository extends CrudRepository<Trade, Long> {
+@RepositoryRestResource
+public interface TradeRepository extends CrudRepository<Trade, String> {
 }
