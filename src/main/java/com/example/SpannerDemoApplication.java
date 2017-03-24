@@ -43,6 +43,9 @@ public class SpannerDemoApplication implements CommandLineRunner {
 
   @Override
   public void run(String... strings) throws Exception {
+    // Just for testing
+    // Not the best example of an ID
+    // Also, not having composite keys yet
     final String traderId = UUID.randomUUID().toString();
     spannerTemplate.transaction(ctx -> {
       Trader trader = Trader.builder().id(traderId)
